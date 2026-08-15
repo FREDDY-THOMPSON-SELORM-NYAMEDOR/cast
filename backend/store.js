@@ -7,6 +7,7 @@ const nodemailer = require('nodemailer');
 const cloudinary = require('cloudinary').v2;
 
 const dataFile = path.join(__dirname, '.data.json');
+const revokedFile = path.join(__dirname, '.revoked-tokens.json');
 
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
@@ -58,6 +59,37 @@ function loadStore() {
 
 function saveStore(store) {
   fs.writeFileSync(dataFile, JSON.stringify(store, null, 2));
+}
+
+function loadRevoked() {
+  if (!fs.existsSync(revokedFile)) {
+    fs.writeFileSync(revokedFile, JSON.stringify([]));
+    return [];
+  }
+
+  try {
+    return JSON.parse(fs.readFileSync(revokedFile, 'utf8')) || [];
+  } catch (e) {
+    fs.writeFileSync(revokedFile, JSON.stringify([]));
+    return [];
+  }
+}
+
+function saveRevoked(list) {
+  fs.writeFileSync(revokedFile, JSON.stringify(list, null, 2));
+}
+
+function revokeToken(token, reason) {
+  const list = loadRevoked();
+  list.push({ token, reason: reason || null, revokedAt: new Date().toISOString() });
+  saveRevoked(list);
+  return true;
+}
+
+function isTokenRevoked(token) {
+  if (!token) return false;
+  const list = loadRevoked();
+  return list.some((entry) => entry.token === token);
 }
 
 let store = loadStore();
@@ -268,6 +300,20 @@ async function listVideos() {
   return store.videos.map((video) => ({ ...video }));
 }
 
+async function getUserById(id) {
+  if (!id) return null;
+  if (mongoReady) {
+    try {
+      const user = await UserModel.findById(id);
+      return user ? { ...user.toObject(), id: user._id.toString() } : null;
+    } catch (e) {
+      return null;
+    }
+  }
+
+  return store.users.find((u) => u.id === id) || null;
+}
+
 async function uploadImageToCloudinary(imageUrl, folder = 'cast') {
   return new Promise((resolve, reject) => {
     cloudinary.uploader.upload(imageUrl, { folder }, (error, result) => {
@@ -309,5 +355,9 @@ module.exports = {
   markSubscriptionSuccessful,
   getSubscriptions,
   listVideos,
-  uploadImageToCloudinary
+  uploadImageToCloudinary,
+  getUserById,
+  revokeToken,
+  isTokenRevoked
 };
+

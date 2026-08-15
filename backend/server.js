@@ -16,6 +16,7 @@ const {
   listVideos,
   uploadImageToCloudinary
 } = require('./store');
+const { authMiddleware, adminMiddleware } = require('./middleware/authMiddleware');
 
 dotenv.config();
 
@@ -32,7 +33,13 @@ app.use(helmet());
 app.use(compression());
 app.use(morgan(process.env.NODE_ENV === 'production' ? 'combined' : 'dev'));
 app.use(cors(corsOptions));
-app.use(express.json({ limit: '2mb' }));
+// Capture raw body for webhook signature verification while still parsing JSON
+app.use(express.json({
+  limit: '2mb',
+  verify: (req, _res, buf) => {
+    req.rawBody = buf;
+  }
+}));
 app.use(rateLimit({ windowMs: 15 * 60 * 1000, max: 120, standardHeaders: true, legacyHeaders: false }));
 
 initializeStore().catch((error) => {
@@ -64,6 +71,29 @@ app.post('/auth', async (req, res) => {
     return res.json({ user, token: user.token });
   } catch (error) {
     res.status(500).json({ message: error.message });
+  }
+});
+
+app.get('/auth/me', authMiddleware, async (req, res) => {
+  try {
+    if (!req.user || !req.user.id) return res.status(401).json({ message: 'Not authenticated.' });
+    const user = await require('./store').getUserById(req.user.id);
+    if (!user) return res.status(404).json({ message: 'User not found.' });
+    return res.json({ user });
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+});
+
+app.post('/auth/revoke', authMiddleware, async (req, res) => {
+  try {
+    const auth = req.headers.authorization || '';
+    const token = auth.split(' ')[1];
+    if (!token) return res.status(400).json({ message: 'Token is required.' });
+    await require('./store').revokeToken(token, `revoked by user ${req.user.id}`);
+    return res.json({ revoked: true });
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
   }
 });
 
@@ -135,72 +165,16 @@ app.post('/subscribe', async (req, res) => {
   }
 });
 
-app.get('/verify', async (req, res) => {
-  try {
-    const { reference } = req.query;
+// Payment routes (moved to dedicated router)
+const paymentRoutes = require('./src/routes/paymentRoutes');
+app.use('/', paymentRoutes);
 
-    if (!reference) {
-      return res.status(400).json({ message: 'Reference is required.' });
-    }
+// Protect admin routes
+app.use('/admin', authMiddleware, adminMiddleware);
 
-    if (process.env.PAYSTACK_SECRET_KEY) {
-      const axios = require('axios');
-      const response = await axios.get(`https://api.paystack.co/transaction/verify/${reference}`, {
-        headers: { Authorization: `Bearer ${process.env.PAYSTACK_SECRET_KEY}` }
-      });
-
-      const status = response.data.data.status === 'success' ? 'active' : 'failed';
-      const updated = await markSubscriptionSuccessful(reference, status, response.data.data);
-      return res.json({ success: status === 'active', status, subscription: updated });
-    }
-
-    const updated = await markSubscriptionSuccessful(reference, 'active', { status: 'mock-success' });
-    return res.json({ success: true, status: 'active', subscription: updated });
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
-});
-
-app.get('/admin/videos', async (_req, res) => {
-  try {
-    const videos = await listVideos();
-    res.json(videos);
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
-});
-
-app.post('/admin/videos', async (req, res) => {
-  try {
-    const video = await createVideo(req.body);
-    res.status(201).json(video);
-  } catch (error) {
-    res.status(400).json({ message: error.message });
-  }
-});
-
-app.post('/admin/upload-image', async (req, res) => {
-  try {
-    const { imageUrl, folder = 'cast' } = req.body;
-    if (!imageUrl) {
-      return res.status(400).json({ message: 'imageUrl is required.' });
-    }
-
-    const result = await uploadImageToCloudinary(imageUrl, folder);
-    res.json({ secureUrl: result.secure_url });
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
-});
-
-app.get('/admin/subscriptions', async (_req, res) => {
-  try {
-    const subscriptions = await getSubscriptions();
-    res.json(subscriptions);
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
-});
+// Admin routes (moved to dedicated router)
+const adminRoutes = require('./src/routes/adminRoutes');
+app.use('/admin', adminRoutes);
 
 if (require.main === module) {
   app.listen(PORT, () => {

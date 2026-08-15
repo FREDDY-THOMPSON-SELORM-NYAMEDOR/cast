@@ -1,7 +1,28 @@
 import { View, Text, Pressable } from 'react-native';
 import GlassCard from '../components/GlassCard';
 import PrimaryButton from '../components/PrimaryButton';
+import { useContext } from 'react';
+import { AuthContext } from '../context/AuthContext';
+import { subscribe } from '../services/api';
+
 export default function SubscribeScreen({ navigation }) {
+  const { user, token } = useContext(AuthContext);
+
+  async function handleSubscribe() {
+    if (!user) return navigation.navigate('Auth');
+    try {
+      const resp = await subscribe({ email: user.email, amount: 35 }, token);
+      if (resp && resp.authorizationUrl) {
+        // Open authorization URL in browser (web) or use Linking for mobile
+        const { Linking } = require('react-native');
+        Linking.openURL(resp.authorizationUrl);
+      } else {
+        alert(resp.message || 'Unable to start payment');
+      }
+    } catch (e) {
+      alert(e.message);
+    }
+  }
   return (
     <View className="flex-1 bg-[#050c1a] px-6 pt-16">
       <Pressable onPress={()=>navigation.goBack()} className="w-10 h-10 rounded-full bg-white/10 items-center justify-center mb-8"><Text className="text-white">✕</Text></Pressable>
@@ -17,7 +38,7 @@ export default function SubscribeScreen({ navigation }) {
         <GlassCard className="p-5"><Text className="text-white font-bold">Monthly</Text><Text className="text-white/50 text-[12px]">GH₵ 35 / month</Text></GlassCard>
       </View>
       <View className="mt-auto mb-10 gap-3">
-        <PrimaryButton label="Subscribe with Paystack" />
+        <PrimaryButton label="Subscribe with Paystack" onPress={handleSubscribe} />
         <Text className="text-white/30 text-[11px] text-center">Secure payment via Paystack • Cancel anytime</Text>
       </View>
     </View>
