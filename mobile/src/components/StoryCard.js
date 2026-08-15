@@ -1,73 +1,13 @@
-import React from 'react';
-import { View, Text, Image, TouchableOpacity, StyleSheet } from 'react-native';
-import { COLORS } from '../theme';
 
-export default function StoryCard({ episode, onPress }) {
+import { View, Text, Image, Pressable } from 'react-native';
+export default function StoryCard({ item={}, onPress }){
   return (
-    <TouchableOpacity style={styles.card} onPress={onPress}>
-      <Image source={{ uri: episode.image }} style={styles.cardImage} />
-      <View style={styles.cardContent}>
-        <View style={styles.cardTopRow}>
-          <Text style={styles.cardTitle}>{episode.title}</Text>
-          <Text style={styles.badge}>{episode.isPremium ? 'Premium' : 'Free'}</Text>
-        </View>
-        <Text style={styles.cardDescription}>{episode.description}</Text>
-        <View style={styles.cardMetaRow}>
-          <Text style={styles.cardMeta}>{episode.category}</Text>
-          <Text style={styles.cardMeta}>{episode.duration}</Text>
-        </View>
+    <Pressable onPress={onPress} className="w-[48%] mb-4 active:opacity-80">
+      <View className="relative h-[250px] rounded-[22px] overflow-hidden bg-surface">
+        <Image source={{uri: item.cover || 'https://picsum.photos/300/500?random=1'}} className="w-full h-full" />
+        <View className="absolute top-3 left-3 bg-black/60 px-2.5 py-1 rounded-full border border-white/10"><Text className="text-white text-[9px] font-bold">{item.episodes||8} EPS</Text></View>
+        <View className="absolute bottom-0 p-3.5 w-full bg-black/40"><Text className="text-white text-[14px] font-bold" numberOfLines={2}>{item.title||'Love in Neo-Lagos'}</Text><Text className="text-white/50 text-[11px] mt-1">{item.genre||'Romance'} • 5 min/ep</Text></View>
       </View>
-    </TouchableOpacity>
+    </Pressable>
   );
 }
-
-const styles = StyleSheet.create({
-  card: {
-    backgroundColor: COLORS.panel,
-    borderRadius: 18,
-    borderWidth: 1,
-    borderColor: COLORS.border,
-    marginBottom: 12,
-    overflow: 'hidden',
-  },
-  cardImage: {
-    width: '100%',
-    height: 140,
-    resizeMode: 'cover',
-  },
-  cardContent: {
-    padding: 14,
-  },
-  cardTopRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  cardTitle: {
-    color: COLORS.text,
-    fontWeight: '700',
-    fontSize: 17,
-    flex: 1,
-    paddingRight: 10,
-  },
-  badge: {
-    color: COLORS.premium,
-    fontWeight: '700',
-    fontSize: 12,
-    textTransform: 'uppercase',
-  },
-  cardDescription: {
-    color: COLORS.muted,
-    marginTop: 6,
-    lineHeight: 20,
-  },
-  cardMetaRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginTop: 10,
-  },
-  cardMeta: {
-    color: '#7dd3fc',
-    fontWeight: '600',
-  },
-});
