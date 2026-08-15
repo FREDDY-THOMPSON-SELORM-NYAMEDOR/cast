@@ -1,12 +1,35 @@
+import { View, Text, ScrollView, Pressable } from 'react-native';
+import GlassCard from '../components/GlassCard';
+import PrimaryButton from '../components/PrimaryButton';
 
-import { View, Text, ScrollView, Image, Pressable } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-const EPS=[{id:1,title:'The Signal',locked:false},{id:2,title:'Echoes',locked:false},{id:3,title:'Contact',locked:true}];
-export default function EpisodeDetailScreen({ navigation }){
+export default function EpisodeDetailScreen({ navigation, route }) {
+  const item = route?.params?.item || { title: 'The Future of AI is Not What You Think', tag: 'NEW DROP' };
   return (
-    <View className="flex-1 bg-background"><ScrollView>
-      <View className="h-[460px] bg-surface"><Image source={{uri:'https://picsum.photos/400/700?random=detail'}} className="w-full h-full" /><SafeAreaView className="absolute top-0 px-6"><Pressable onPress={()=>navigation.goBack()} className="w-10 h-10 bg-black/50 rounded-full items-center justify-center"><Text className="text-white">←</Text></Pressable></SafeAreaView><View className="absolute bottom-0 p-6"><Text className="text-primary text-[11px] font-black tracking-[3px]">SCI-FI</Text><Text className="text-white text-[30px] font-black">The Last Signal From Kepler</Text></View></View>
-      <View className="px-6 mt-4">{EPS.map((ep,i)=><Pressable key={ep.id} onPress={()=>ep.locked&&navigation.navigate('Subscribe')} className="flex-row gap-4 mb-4"><View className="w-[110px] h-[68px] bg-surface rounded-[12px] items-center justify-center"><Text className="text-white">{ep.locked?'🔒':'▶'}</Text></View><View><Text className="text-white/40 text-[11px] font-bold">EPISODE {i+1}</Text><Text className="text-white font-bold">{ep.title}</Text></View></Pressable>)}</View>
-    </ScrollView><View className="px-6 py-5 border-t border-white/5"><Pressable onPress={()=>navigation.navigate('Subscribe')} className="bg-primary h-[56px] rounded-full items-center justify-center"><Text className="text-white font-bold">Unlock All - GHS 25</Text></Pressable></View></View>
+    <View className="flex-1 bg-[#050c1a]">
+      <View className="px-6 pt-14 pb-6 flex-row justify-between">
+        <Pressable onPress={()=>navigation.goBack()} className="w-10 h-10 rounded-full bg-white/10 items-center justify-center"><Text className="text-white">‹</Text></Pressable>
+        <Pressable className="w-10 h-10 rounded-full bg-white/10 items-center justify-center"><Text className="text-white">•••</Text></Pressable>
+      </View>
+      <ScrollView className="px-6" contentContainerStyle={{ paddingBottom: 40 }}>
+        <View className="w-full h-[240px] rounded-[32px] bg-gradient-to-br from-[#00f2fe]/30 to-[#050c1a] border border-[#00f2fe]/20 items-center justify-center mb-6">
+          <Text className="text-[#00f2fe] text-5xl">◐</Text>
+        </View>
+        <View className="px-2 py-2 rounded-full bg-[#00f2fe]/15 self-start mb-4"><Text className="text-[#00f2fe] text-[11px] font-bold tracking-widest px-2">{item.tag}</Text></View>
+        <Text className="text-white text-[32px] font-bold leading-[34px] tracking-tight mb-3">{item.title}</Text>
+        <Text className="text-white/40 text-[14px] leading-6 mb-6">Deep dive into how modern AI systems are built, why they hallucinate, and what it takes to ship production-grade voice products in Africa and beyond.</Text>
+        <GlassCard className="p-5 mb-6">
+          <View className="flex-row justify-between mb-4">
+            <View><Text className="text-white/40 text-[11px] tracking-widest">DURATION</Text><Text className="text-white font-semibold">42:18</Text></View>
+            <View><Text className="text-white/40 text-[11px] tracking-widest">LISTENS</Text><Text className="text-white font-semibold">12.4k</Text></View>
+            <View><Text className="text-white/40 text-[11px] tracking-widest">QUALITY</Text><Text className="text-[#00f2fe] font-semibold">HD</Text></View>
+          </View>
+          <View className="h-[4px] bg-white/10 rounded-full"><View className="h-[4px] w-[35%] bg-[#00f2fe] rounded-full" /></View>
+        </GlassCard>
+        <View className="gap-3">
+          <PrimaryButton label="Play Episode" onPress={()=>navigation.navigate('Player')} />
+          <PrimaryButton label="Subscribe to Series" variant="secondary" onPress={()=>navigation.navigate('Subscribe')} />
+        </View>
+      </ScrollView>
+    </View>
   );
 }

@@ -1,16 +1,25 @@
-
-import { View, Text, Pressable, ScrollView } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { PLANS } from '../lib/paystack';
-import { useState } from 'react';
-export default function SubscribeScreen({ navigation }){
-  const [sel,setSel]=useState(PLANS[0]);
+import { View, Text, Pressable } from 'react-native';
+import GlassCard from '../components/GlassCard';
+import PrimaryButton from '../components/PrimaryButton';
+export default function SubscribeScreen({ navigation }) {
   return (
-    <SafeAreaView className="flex-1 bg-background"><ScrollView className="px-6">
-      <Pressable onPress={()=>navigation.goBack()} className="w-10 h-10 bg-surface rounded-full items-center justify-center mt-2"><Text className="text-white">✕</Text></Pressable>
-      <Text className="text-white text-[36px] font-black mt-8">Unlock the full story.</Text>
-      <View className="mt-8 gap-4">{PLANS.map(p=>{const s=sel.id===p.id;return <Pressable key={p.id} onPress={()=>setSel(p)} className={`rounded-[20px] p-5 border-2 ${s?'bg-white border-white':'bg-surface border-white/5'}`}><View className="flex-row justify-between"><Text className={`${s?'text-black':'text-white'} text-[18px] font-bold`}>{p.title}</Text><Text className={`${s?'text-black':'text-white'} text-[28px] font-black`}>GHS {p.price}</Text></View></Pressable>})}</View>
-      <View className="mt-6 bg-surface rounded-[16px] p-4 border border-white/5"><Text className="text-white/40 text-[11px] font-bold">SECURED BY PAYSTACK • Mobile Money, Card, Bank</Text></View>
-    </ScrollView><View className="px-6 py-5"><Pressable className="bg-primary h-[56px] rounded-full items-center justify-center"><Text className="text-white font-bold">Continue with Paystack - GHS {sel.price}</Text></Pressable></View></SafeAreaView>
+    <View className="flex-1 bg-[#050c1a] px-6 pt-16">
+      <Pressable onPress={()=>navigation.goBack()} className="w-10 h-10 rounded-full bg-white/10 items-center justify-center mb-8"><Text className="text-white">✕</Text></Pressable>
+      <Text className="text-white text-[36px] font-bold leading-[38px]">Unlock all{"\n"}episodes</Text>
+      <Text className="text-white/40 mt-4 leading-6">Get ad-free listening, early access, and offline downloads for your Cast journey.</Text>
+      <View className="mt-8 gap-4">
+        <GlassCard className="p-5 border-[#00f2fe]/30 bg-[#00f2fe]/10">
+          <View className="flex-row justify-between items-center">
+            <View><Text className="text-white font-bold">Yearly • Best Deal</Text><Text className="text-white/50 text-[12px]">GH₵ 299 / year</Text></View>
+            <View className="px-3 py-1 rounded-full bg-[#00f2fe]"><Text className="text-[#050c1a] text-[11px] font-bold">-40%</Text></View>
+          </View>
+        </GlassCard>
+        <GlassCard className="p-5"><Text className="text-white font-bold">Monthly</Text><Text className="text-white/50 text-[12px]">GH₵ 35 / month</Text></GlassCard>
+      </View>
+      <View className="mt-auto mb-10 gap-3">
+        <PrimaryButton label="Subscribe with Paystack" />
+        <Text className="text-white/30 text-[11px] text-center">Secure payment via Paystack • Cancel anytime</Text>
+      </View>
+    </View>
   );
 }
