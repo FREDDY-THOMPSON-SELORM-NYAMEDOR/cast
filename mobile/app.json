@@ -1,0 +1,17 @@
+{
+  "expo": {
+    "name": "Cast",
+    "slug": "cast",
+    "scheme": "cast",
+    "platforms": ["ios", "android", "web"],
+    "orientation": "portrait",
+    "userInterfaceStyle": "light",
+    "sdkVersion": "51.0.0",
+    "assetBundlePatterns": ["**/*"],
+    "ios": { "supportsTablet": true },
+    "android": { "package": "com.cast.app" },
+    "web": {
+      "bundler": "metro"
+    }
+  }
+}

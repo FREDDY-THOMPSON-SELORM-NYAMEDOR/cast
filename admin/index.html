@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Cast Admin</title>
+    <style>
+      body { font-family: Arial, sans-serif; background: #f8fafc; color: #0f172a; margin: 0; padding: 20px; }
+      .container { max-width: 900px; margin: 0 auto; display: grid; gap: 16px; }
+      .card { background: white; border-radius: 16px; padding: 20px; box-shadow: 0 10px 30px rgba(15, 23, 42, 0.08); }
+      input, textarea, select, button { width: 100%; padding: 10px; margin-top: 8px; border-radius: 10px; border: 1px solid #cbd5e1; }
+      button { background: #2563eb; color: white; border: none; cursor: pointer; }
+      .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; }
+      .pill { display: inline-block; padding: 4px 8px; border-radius: 999px; background: #e0f2fe; color: #0369a1; font-size: 12px; }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="card">
+        <h1>Cast Admin Dashboard</h1>
+        <p>Upload episodes, tag them as teaser or premium, and monitor subscriptions.</p>
+      </div>
+      <div class="card">
+        <h2>Add Episode</h2>
+        <form id="videoForm">
+          <div class="grid">
+            <input required name="title" placeholder="Title" />
+            <input required name="episodeNumber" placeholder="Episode number" type="number" />
+            <select name="isPremium">
+              <option value="false">Teaser</option>
+              <option value="true">Premium</option>
+            </select>
+            <input name="duration" placeholder="Duration" />
+          </div>
+          <textarea required name="description" placeholder="Description" rows="4"></textarea>
+          <input name="thumbnail" placeholder="Thumbnail URL" />
+          <button type="submit">Upload Episode</button>
+        </form>
+      </div>
+      <div class="card">
+        <h2>Current Episodes</h2>
+        <div id="videos"></div>
+      </div>
+      <div class="card">
+        <h2>Subscriptions</h2>
+        <div id="subscriptions"></div>
+      </div>
+    </div>
+    <script>
+      const API = 'http://localhost:3001';
+      async function load() {
+        const videosRes = await fetch(`${API}/admin/videos`);
+        const videos = await videosRes.json();
+        const subsRes = await fetch(`${API}/admin/subscriptions`);
+        const subs = await subsRes.json();
+        document.getElementById('videos').innerHTML = videos.map((video) => `<div style="border-top:1px solid #e2e8f0;padding:12px 0;"><strong>${video.title}</strong><br />${video.description}<br /><span class="pill">${video.isPremium ? 'Premium' : 'Teaser'}</span></div>`).join('');
+        document.getElementById('subscriptions').innerHTML = subs.map((sub) => `<div style="border-top:1px solid #e2e8f0;padding:12px 0;"><strong>${sub.reference}</strong><br />Email: ${sub.email}<br />Status: ${sub.status}<br />Amount: GHS ${sub.amount}</div>`).join('');
+      }
+      document.getElementById('videoForm').addEventListener('submit', async (event) => {
+        event.preventDefault();
+        const form = new FormData(event.target);
+        const payload = Object.fromEntries(form.entries());
+        payload.isPremium = payload.isPremium === 'true';
+        const response = await fetch(`${API}/admin/videos`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+        if (response.ok) {
+          event.target.reset();
+          await load();
+        }
+      });
+      load();
+    </script>
+  </body>
+</html>

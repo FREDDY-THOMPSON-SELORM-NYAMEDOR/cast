@@ -1,0 +1,32 @@
+export const SAMPLE_EPISODES = [
+  {
+    id: 'ep-1',
+    title: 'The Moon Lantern',
+    description: 'A brave child uncovers a hidden path through a glowing forest and learns to trust her instincts.',
+    image: 'https://images.unsplash.com/photo-1500534623283-312aade485b7?auto=format&fit=crop&w=900&q=80',
+    duration: '8 min',
+    isPremium: false,
+    category: 'Adventure',
+    episodeNumber: 1,
+  },
+  {
+    id: 'ep-2',
+    title: 'The Secret River',
+    description: 'A mysterious river carries voices from the past and opens a door to a forgotten kingdom.',
+    image: 'https://images.unsplash.com/photo-1519681393784-d120267933ba?auto=format&fit=crop&w=900&q=80',
+    duration: '12 min',
+    isPremium: true,
+    category: 'Fantasy',
+    episodeNumber: 2,
+  },
+  {
+    id: 'ep-3',
+    title: 'The Clockmaker’s Dream',
+    description: 'A young inventor finds a time-bending bracelet that changes the course of a whole city.',
+    image: 'https://images.unsplash.com/photo-1493246507139-91e8fad9978e?auto=format&fit=crop&w=900&q=80',
+    duration: '10 min',
+    isPremium: true,
+    category: 'Sci-Fi',
+    episodeNumber: 3,
+  },
+];
