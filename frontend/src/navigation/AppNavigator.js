@@ -10,6 +10,7 @@ import SubscribeScreen from '../screens/SubscribeScreen';
 import ProfileScreen from '../screens/ProfileScreen';
 import PlayerScreen from '../screens/PlayerScreen';
 import AuthScreen from '../screens/AuthScreen';
+import AdminScreen from '../screens/AdminScreen';
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -41,6 +42,7 @@ export default function AppNavigator() {
       <Stack.Navigator screenOptions={{ headerShown: false, contentStyle: { backgroundColor: '#050c1a' }, animation: 'slide_from_right' }}>
         <Stack.Screen name="Main" component={MainTabs} />
         <Stack.Screen name="Auth" component={AuthScreen} options={{ presentation: 'modal' }} />
+        <Stack.Screen name="Admin" component={AdminScreen} options={{ presentation: 'modal' }} />
         <Stack.Screen name="EpisodeDetail" component={EpisodeDetailScreen} />
         <Stack.Screen name="Player" component={PlayerScreen} options={{ presentation: 'modal', animation: 'slide_from_bottom' }} />
         <Stack.Screen name="Subscribe" component={SubscribeScreen} options={{ presentation: 'modal', animation: 'slide_from_bottom' }} />

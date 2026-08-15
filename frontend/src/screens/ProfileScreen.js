@@ -34,6 +34,7 @@ export default function ProfileScreen({ navigation }) {
           <GlassCard key={k} className="p-4 flex-row justify-between mb-3"><Text className="text-white/60">{k}</Text><Text className="text-white font-semibold">{v}</Text></GlassCard>
         ))}
         <Pressable onPress={logout} className="mt-6 p-3 rounded bg-white/5 items-center"><Text className="text-white">Sign Out</Text></Pressable>
+        <Pressable onPress={() => navigation.navigate('Admin')} className="mt-3 p-3 rounded bg-white/5 items-center"><Text className="text-white">Admin Panel</Text></Pressable>
       </ScrollView>
     </View>
   );

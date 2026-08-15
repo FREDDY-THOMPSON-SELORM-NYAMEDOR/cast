@@ -1056,3 +1056,9 @@
 {"_e":"metro:client_log","_t":1786834017119,"level":"debug","data":["[initMessageListener]  --- receive contentScriptInitDone ---"]}
 {"_e":"metro:client_log","_t":1786834019457,"level":"debug","data":["[initMessageListener]  --- receive contentscript message ---","{\"__wallet_sent_from_content_script_msg__\": true, \"messageId\": \"pVUufI3HJEshloRJEftal\", \"returnValue\": {\"autoSignEnabled\": false, \"extensionId\": \"289a82e3-71d4-412d-b068-581fd1bfa3d4\", \"version\": \"1.21.0\", \"walletLocked\": true}, \"target\": \"inPage\", \"type\": \"functionCallResult\"}"]}
 {"_e":"metro:bundling:started","_t":1786834029406,"id":"a","platform":"web","environment":null,"entry":"src\\screens\\SubscribeScreen.js"}
+{"_e":"root:init","_t":1786836898862,"format":"v0-jsonl","version":"57.0.15"}
+{"_e":"env:mode","_t":1786836898894,"nodeEnv":"development","babelEnv":"development","mode":"development"}
+{"_e":"env:load","_t":1786836898959,"mode":"development","files":[],"env":{}}
+{"_e":"devserver:start","_t":1786836907281,"mode":"development","web":true,"baseUrl":"","asyncRoutes":false,"routerRoot":"../..\\..\\app","serverComponents":false,"serverActions":false,"serverRendering":false,"apiRoutes":false,"exporting":false}
+{"_e":"metro:config","_t":1786836928235,"serverRoot":"../..\\..","projectRoot":"../..\\..","exporting":false,"flags":{"autolinkingModuleResolution":false,"serverActions":false,"serverComponents":false,"reactCompiler":false,"optimizeGraph":false,"treeshaking":false,"logbox":false}}
+{"_e":"expo:dev-tools-plugin:load","_t":1786836935413,"plugins":[]}

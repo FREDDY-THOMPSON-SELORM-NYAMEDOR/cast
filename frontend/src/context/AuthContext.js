@@ -7,11 +7,14 @@ export const AuthContext = createContext({});
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
   const [token, setToken] = useState(null);
+  const [adminSecret, setAdminSecret] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     (async () => {
       const t = await AsyncStorage.getItem('auth_token');
+      const a = await AsyncStorage.getItem('admin_secret');
+      if (a) setAdminSecret(a);
       if (t) {
         setToken(t);
         try {
@@ -53,8 +56,18 @@ export function AuthProvider({ children }) {
     setUser(null);
   }
 
+  async function setAdminKey(secret) {
+    if (!secret) {
+      await AsyncStorage.removeItem('admin_secret');
+      setAdminSecret(null);
+      return;
+    }
+    await AsyncStorage.setItem('admin_secret', secret);
+    setAdminSecret(secret);
+  }
+
   return (
-    <AuthContext.Provider value={{ user, token, loading, login, register, logout }}>
+    <AuthContext.Provider value={{ user, token, loading, login, register, logout, adminSecret, setAdminKey }}>
       {children}
     </AuthContext.Provider>
   );
