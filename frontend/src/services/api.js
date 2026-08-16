@@ -1,4 +1,4 @@
-const API_BASE = 'http://10.0.2.2:3001';
+const API_BASE = 'http://localhost:3001';
 // Note: use 10.0.2.2 for Android emulator to reach host; use localhost for web
 
 export async function postAuth(body) {
